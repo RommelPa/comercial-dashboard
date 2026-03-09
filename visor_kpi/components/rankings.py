@@ -42,20 +42,20 @@ def render_ranking_vendedores(
         elif pos == 3:
             pos_html = "🥉"
         else:
-            pos_html = f"<span style='color:{COLORS[\"text_secondary\"]};font-weight:600'>#{pos}</span>"
+            pos_html = f"<span style='color:{COLORS['text_secondary']};font-weight:600'>#{pos}</span>"
 
         # Delta de ranking
         if delta_r > 0:
-            delta_html = f"<span style='color:{COLORS[\"success\"]}'>↑{delta_r}</span>"
+            delta_html = f"<span style='color:{COLORS['success']}'>↑{delta_r}</span>"
         elif delta_r < 0:
-            delta_html = f"<span style='color:{COLORS[\"danger\"]}'>↓{abs(delta_r)}</span>"
+            delta_html = f"<span style='color:{COLORS['danger']}'>↓{abs(delta_r)}</span>"
         else:
-            delta_html = f"<span style='color:{COLORS[\"text_secondary\"]}'>—</span>"
+            delta_html = f"<span style='color:{COLORS['text_secondary']}'>—</span>"
 
         # Barra de progreso inline
         bar_width = min(cumpl * 100, 100)
         bar_html  = (
-            f"<div style='background:{COLORS[\"border\"]};border-radius:3px;height:5px;width:100%;margin-top:3px'>"
+            f"<div style='background:{COLORS['border']};border-radius:3px;height:5px;width:100%;margin-top:3px'>"
             f"<div style='width:{bar_width:.0f}%;background:{color_sem};height:5px;border-radius:3px'></div>"
             f"</div>"
         )
