@@ -29,42 +29,43 @@ def render_kpi_card(
     sem_label = get_label_semaforo(cumplimiento) if cumplimiento is not None else "info"
     sem_color = get_color_semaforo(cumplimiento) if cumplimiento is not None else COLORS["primary_light"]
 
-    # Delta HTML
+    # Delta HTML — single-line to avoid blank lines that terminate CommonMark HTML blocks
     delta_html = ""
     if delta_pct is not None:
         pct = delta_pct * 100
         if pct > 0.05:
-            delta_html = f'<div class="kpi-delta positive">▲ +{pct:.1f}%</div>'
+            delta_html = f"<div style='font-size:12px;font-weight:600;color:{COLORS['success']};margin-top:4px'>▲ +{pct:.1f}%</div>"
         elif pct < -0.05:
-            delta_html = f'<div class="kpi-delta negative">▼ {pct:.1f}%</div>'
+            delta_html = f"<div style='font-size:12px;font-weight:600;color:{COLORS['danger']};margin-top:4px'>▼ {pct:.1f}%</div>"
         else:
-            delta_html = f'<div class="kpi-delta neutral">— 0.0%</div>'
+            delta_html = f"<div style='font-size:12px;font-weight:600;color:{COLORS['text_secondary']};margin-top:4px'>— 0.0%</div>"
 
-    # Barra de progreso
+    # Progress bar — single-line concatenation (no embedded \n)
     progress_html = ""
     if cumplimiento is not None and objetivo is not None:
         pct_bar = min(cumplimiento * 100, 100)
-        progress_html = f"""
-        <div class="kpi-progress-bar">
-            <div class="kpi-progress-fill" 
-                 style="width:{pct_bar:.1f}%; background:{sem_color}">
-            </div>
-        </div>
-        <div class="kpi-objetivo">
-            {fmt_pct(cumplimiento)} del objetivo {objetivo}
-        </div>
-        """
+        progress_html = (
+            f"<div style='background:{COLORS['border']};border-radius:3px;height:5px;"
+            f"width:100%;margin-top:8px'>"
+            f"<div style='width:{pct_bar:.1f}%;background:{sem_color};"
+            f"height:5px;border-radius:3px'></div></div>"
+            f"<div style='font-size:11px;color:{COLORS['text_secondary']};margin-top:4px'>"
+            f"{fmt_pct(cumplimiento)} del objetivo {objetivo}</div>"
+        )
 
-    icon_html = f'<span style="font-size:20px;margin-right:6px">{icon}</span>' if icon else ""
+    icon_html = f"<span style='font-size:18px;margin-right:5px'>{icon}</span>" if icon else ""
 
-    html = f"""
-    <div class="kpi-card {sem_label}" style="width:{width}">
-        <div class="kpi-label">{icon_html}{label}</div>
-        <div class="kpi-value">{value}</div>
-        {delta_html}
-        {progress_html}
-    </div>
-    """
+    # Outer card — single-line concatenation (no embedded \n)
+    html = (
+        f"<div style='background:{COLORS['bg_card']};border-left:4px solid {sem_color};"
+        f"border-radius:8px;padding:16px 18px;margin-bottom:4px;width:{width}'>"
+        f"<div style='font-size:10px;font-weight:700;color:{COLORS['text_secondary']};"
+        f"text-transform:uppercase;letter-spacing:1px;margin-bottom:6px'>{icon_html}{label}</div>"
+        f"<div style='font-size:26px;font-weight:700;color:{COLORS['text_primary']};"
+        f"line-height:1.1'>{value}</div>"
+        f"{delta_html}{progress_html}"
+        f"</div>"
+    )
     st.markdown(html, unsafe_allow_html=True)
 
 
@@ -81,19 +82,21 @@ def render_kpi_card_simple(
     if delta_pct is not None:
         pct = delta_pct * 100
         if pct > 0.05:
-            delta_html = f'<div class="kpi-delta positive">▲ +{pct:.1f}%</div>'
+            delta_html = f"<div style='font-size:12px;font-weight:600;color:{COLORS['success']};margin-top:4px'>▲ +{pct:.1f}%</div>"
         elif pct < -0.05:
-            delta_html = f'<div class="kpi-delta negative">▼ {pct:.1f}%</div>'
+            delta_html = f"<div style='font-size:12px;font-weight:600;color:{COLORS['danger']};margin-top:4px'>▼ {pct:.1f}%</div>"
         else:
-            delta_html = f'<div class="kpi-delta neutral">— 0.0%</div>'
+            delta_html = f"<div style='font-size:12px;font-weight:600;color:{COLORS['text_secondary']};margin-top:4px'>— 0.0%</div>"
 
-    html = f"""
-    <div class="kpi-card" style="border-left-color:{border_color}">
-        <div class="kpi-label">{label}</div>
-        <div class="kpi-value">{value}</div>
-        {delta_html}
-    </div>
-    """
+    html = (
+        f"<div style='background:{COLORS['bg_card']};border-left:4px solid {border_color};"
+        f"border-radius:8px;padding:16px 18px;margin-bottom:4px'>"
+        f"<div style='font-size:10px;font-weight:700;color:{COLORS['text_secondary']};"
+        f"text-transform:uppercase;letter-spacing:1px;margin-bottom:6px'>{label}</div>"
+        f"<div style='font-size:26px;font-weight:700;color:{COLORS['text_primary']};"
+        f"line-height:1.1'>{value}</div>"
+        f"{delta_html}</div>"
+    )
     st.markdown(html, unsafe_allow_html=True)
 
 

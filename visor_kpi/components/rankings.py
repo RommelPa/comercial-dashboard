@@ -60,38 +60,33 @@ def render_ranking_vendedores(
             f"</div>"
         )
 
-        filas_html += f"""
-        <tr>
-            <td style="text-align:center;width:50px">{pos_html}</td>
-            <td>
-                <div style="font-weight:600;color:{COLORS['text_primary']}">{nombre}</div>
-                <div style="font-size:11px;color:{COLORS['text_secondary']}">{zona}</div>
-            </td>
-            <td style="text-align:right;font-variant-numeric:tabular-nums">
-                <span style="color:{color_sem};font-weight:600">{cumpl_pct}</span>
-                {bar_html}
-            </td>
-            <td style="text-align:right;font-variant-numeric:tabular-nums">{importe}</td>
-            <td style="text-align:center">{delta_html}</td>
-        </tr>
-        """
+        filas_html += (
+            f"<tr style='border-bottom:1px solid {COLORS['border']}'>"
+            f"<td style='text-align:center;width:50px;padding:8px 4px'>{pos_html}</td>"
+            f"<td style='padding:8px 4px'>"
+            f"<div style='font-weight:600;color:{COLORS['text_primary']}'>{nombre}</div>"
+            f"<div style='font-size:11px;color:{COLORS['text_secondary']}'>{zona}</div></td>"
+            f"<td style='text-align:right;padding:8px 4px'>"
+            f"<span style='color:{color_sem};font-weight:600'>{cumpl_pct}</span>"
+            f"{bar_html}</td>"
+            f"<td style='text-align:right;padding:8px 4px;font-variant-numeric:tabular-nums'>{importe}</td>"
+            f"<td style='text-align:center;padding:8px 4px'>{delta_html}</td>"
+            f"</tr>"
+        )
 
-    html = f"""
-    <table class="ranking-table" style="width:100%;border-collapse:collapse">
-        <thead>
-            <tr>
-                <th style="text-align:center">#</th>
-                <th>Vendedor</th>
-                <th style="text-align:right">Cumplimiento</th>
-                <th style="text-align:right">Ventas</th>
-                <th style="text-align:center">Ranking</th>
-            </tr>
-        </thead>
-        <tbody>
-            {filas_html}
-        </tbody>
-    </table>
-    """
+    ths = f"padding:6px 8px;color:{COLORS['text_secondary']};font-size:11px;font-weight:600;border-bottom:2px solid {COLORS['border']}"
+    html = (
+        f"<div style='overflow-x:auto'><table style='width:100%;border-collapse:collapse'>"
+        f"<thead><tr>"
+        f"<th style='text-align:center;{ths}'>#</th>"
+        f"<th style='{ths}'>Vendedor</th>"
+        f"<th style='text-align:right;{ths}'>Cumplimiento</th>"
+        f"<th style='text-align:right;{ths}'>Ventas</th>"
+        f"<th style='text-align:center;{ths}'>Ranking</th>"
+        f"</tr></thead>"
+        f"<tbody>{filas_html}</tbody>"
+        f"</table></div>"
+    )
     st.markdown(html, unsafe_allow_html=True)
 
 
@@ -132,45 +127,39 @@ def render_ranking_clientes(
             f"padding:2px 7px;border-radius:8px;font-size:10px;font-weight:600'>{canal}</span>"
         )
 
-        # Badge Pareto
-        cat_colors = {"A": COLORS["success"], "B": COLORS["warning"], "C": COLORS["text_secondary"]}
-        cat_badge = (
-            f"<span class='badge badge-{cat.lower()}'>{cat}</span>"
-        )
+        # Badge Pareto — inline styles (no CSS class dependency)
+        cat_color = {"A": COLORS["success"], "B": COLORS["warning"], "C": COLORS["text_secondary"]}.get(cat, COLORS["text_secondary"])
+        cat_badge = f"<span style='background:{cat_color};color:#fff;padding:2px 8px;border-radius:4px;font-size:10px;font-weight:600'>{cat}</span>"
 
         # Días sin compra
         dias_color = COLORS["danger"] if dias > 30 else COLORS["text_secondary"]
         dias_html  = f"<span style='color:{dias_color};font-weight:600'>{int(dias)}d</span>"
 
-        filas_html += f"""
-        <tr>
-            <td>
-                <div style="font-weight:600;color:{COLORS['text_primary']};font-size:13px">{nombre}</div>
-                <div style="margin-top:3px">{canal_badge}</div>
-            </td>
-            <td style="text-align:center">{cat_badge}</td>
-            <td style="text-align:right;font-variant-numeric:tabular-nums">{importe}</td>
-            <td style="text-align:right;color:{COLORS['text_secondary']}">{part}</td>
-            <td style="text-align:center">{dias_html}</td>
-        </tr>
-        """
+        filas_html += (
+            f"<tr style='border-bottom:1px solid {COLORS['border']}'>"
+            f"<td style='padding:8px 4px'>"
+            f"<div style='font-weight:600;color:{COLORS['text_primary']};font-size:13px'>{nombre}</div>"
+            f"<div style='margin-top:3px'>{canal_badge}</div></td>"
+            f"<td style='text-align:center;padding:8px 4px'>{cat_badge}</td>"
+            f"<td style='text-align:right;padding:8px 4px;font-variant-numeric:tabular-nums'>{importe}</td>"
+            f"<td style='text-align:right;padding:8px 4px;color:{COLORS['text_secondary']}'>{part}</td>"
+            f"<td style='text-align:center;padding:8px 4px'>{dias_html}</td>"
+            f"</tr>"
+        )
 
-    html = f"""
-    <table class="ranking-table" style="width:100%;border-collapse:collapse">
-        <thead>
-            <tr>
-                <th>Cliente</th>
-                <th style="text-align:center">Cat.</th>
-                <th style="text-align:right">Ventas</th>
-                <th style="text-align:right">Part.%</th>
-                <th style="text-align:center">Sin compra</th>
-            </tr>
-        </thead>
-        <tbody>
-            {filas_html}
-        </tbody>
-    </table>
-    """
+    ths = f"padding:6px 8px;color:{COLORS['text_secondary']};font-size:11px;font-weight:600;border-bottom:2px solid {COLORS['border']}"
+    html = (
+        f"<div style='overflow-x:auto'><table style='width:100%;border-collapse:collapse'>"
+        f"<thead><tr>"
+        f"<th style='{ths}'>Cliente</th>"
+        f"<th style='text-align:center;{ths}'>Cat.</th>"
+        f"<th style='text-align:right;{ths}'>Ventas</th>"
+        f"<th style='text-align:right;{ths}'>Part.%</th>"
+        f"<th style='text-align:center;{ths}'>Sin compra</th>"
+        f"</tr></thead>"
+        f"<tbody>{filas_html}</tbody>"
+        f"</table></div>"
+    )
     st.markdown(html, unsafe_allow_html=True)
 
 
@@ -207,37 +196,34 @@ def render_ranking_productos(
         else:
             var_html = "<span style='color:#8899AA'>—</span>"
 
-        cat_badge = f"<span class='badge badge-{pareto.lower()}'>{pareto}</span>"
+        cat_color_p = {"A": COLORS["success"], "B": COLORS["warning"], "C": COLORS["text_secondary"]}.get(pareto, COLORS["text_secondary"])
+        cat_badge = f"<span style='background:{cat_color_p};color:#fff;padding:2px 8px;border-radius:4px;font-size:10px;font-weight:600'>{pareto}</span>"
 
-        filas_html += f"""
-        <tr>
-            <td>
-                <div style="font-weight:600;color:{COLORS['text_primary']};font-size:13px">{desc}</div>
-                <div style="font-size:11px;color:{COLORS['text_secondary']}">{cat}</div>
-            </td>
-            <td style="text-align:center">{cat_badge}</td>
-            <td style="text-align:right;font-variant-numeric:tabular-nums">{importe}</td>
-            <td style="text-align:right;color:{COLORS['text_secondary']}">{part}</td>
-            <td style="text-align:right">{var_html}</td>
-        </tr>
-        """
+        filas_html += (
+            f"<tr style='border-bottom:1px solid {COLORS['border']}'>"
+            f"<td style='padding:8px 4px'>"
+            f"<div style='font-weight:600;color:{COLORS['text_primary']};font-size:13px'>{desc}</div>"
+            f"<div style='font-size:11px;color:{COLORS['text_secondary']}'>{cat}</div></td>"
+            f"<td style='text-align:center;padding:8px 4px'>{cat_badge}</td>"
+            f"<td style='text-align:right;padding:8px 4px;font-variant-numeric:tabular-nums'>{importe}</td>"
+            f"<td style='text-align:right;padding:8px 4px;color:{COLORS['text_secondary']}'>{part}</td>"
+            f"<td style='text-align:right;padding:8px 4px'>{var_html}</td>"
+            f"</tr>"
+        )
 
-    html = f"""
-    <table class="ranking-table" style="width:100%;border-collapse:collapse">
-        <thead>
-            <tr>
-                <th>Producto</th>
-                <th style="text-align:center">Cat.</th>
-                <th style="text-align:right">Ventas</th>
-                <th style="text-align:right">Part.%</th>
-                <th style="text-align:right">vs Anterior</th>
-            </tr>
-        </thead>
-        <tbody>
-            {filas_html}
-        </tbody>
-    </table>
-    """
+    ths = f"padding:6px 8px;color:{COLORS['text_secondary']};font-size:11px;font-weight:600;border-bottom:2px solid {COLORS['border']}"
+    html = (
+        f"<div style='overflow-x:auto'><table style='width:100%;border-collapse:collapse'>"
+        f"<thead><tr>"
+        f"<th style='{ths}'>Producto</th>"
+        f"<th style='text-align:center;{ths}'>Cat.</th>"
+        f"<th style='text-align:right;{ths}'>Ventas</th>"
+        f"<th style='text-align:right;{ths}'>Part.%</th>"
+        f"<th style='text-align:right;{ths}'>vs Anterior</th>"
+        f"</tr></thead>"
+        f"<tbody>{filas_html}</tbody>"
+        f"</table></div>"
+    )
     st.markdown(html, unsafe_allow_html=True)
 
 
@@ -262,24 +248,19 @@ def render_posicion_ranking(
     prev_pos = f"#{ranking_actual + 1}" if ranking_actual < total_vendedores else "—"
     next_pos = f"#{ranking_actual - 1}" if ranking_actual > 1 else "—"
 
-    html = f"""
-    <div class="ranking-position-box">
-        <div style="font-size:11px;color:{COLORS['text_secondary']};text-transform:uppercase;
-                    letter-spacing:1px;margin-bottom:8px">
-            Tu posición este mes
-        </div>
-        <div style="display:flex;align-items:center;justify-content:center;gap:16px">
-            <span style="color:{COLORS['text_secondary']};font-size:16px">{next_pos}</span>
-            <div class="ranking-position-number">#{ranking_actual}</div>
-            <span style="color:{COLORS['text_secondary']};font-size:16px">{prev_pos}</span>
-        </div>
-        <div class="ranking-position-label">
-            de {total_vendedores} vendedores
-        </div>
-        <div style="margin-top:8px;font-size:13px;font-weight:500">
-            {delta_html}
-            <span style="color:{COLORS['text_secondary']};font-size:11px">vs mes anterior</span>
-        </div>
-    </div>
-    """
+    html = (
+        f"<div style='background:{COLORS['bg_card']};border:1px solid {COLORS['border']};"
+        f"border-radius:8px;padding:20px;text-align:center;margin-bottom:8px'>"
+        f"<div style='font-size:11px;color:{COLORS['text_secondary']};text-transform:uppercase;"
+        f"letter-spacing:1px;margin-bottom:8px'>Tu posición este mes</div>"
+        f"<div style='display:flex;align-items:center;justify-content:center;gap:16px'>"
+        f"<span style='color:{COLORS['text_secondary']};font-size:16px'>{next_pos}</span>"
+        f"<div style='font-size:48px;font-weight:800;color:{COLORS['primary_light']}'>#{ranking_actual}</div>"
+        f"<span style='color:{COLORS['text_secondary']};font-size:16px'>{prev_pos}</span>"
+        f"</div>"
+        f"<div style='color:{COLORS['text_secondary']};font-size:12px;margin-top:4px'>de {total_vendedores} vendedores</div>"
+        f"<div style='margin-top:8px;font-size:13px;font-weight:500'>{delta_html}"
+        f"<span style='color:{COLORS['text_secondary']};font-size:11px'> vs mes anterior</span></div>"
+        f"</div>"
+    )
     st.markdown(html, unsafe_allow_html=True)

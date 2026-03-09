@@ -240,17 +240,18 @@ def chart_pareto(
 
     fig = _apply_theme(fig, titulo)
     fig.update_layout(
-        yaxis  = dict(title="Participación %", ticksuffix="%"),
+        # Use dict(text=...) for axis titles — compatible with all Plotly 5.x versions
+        yaxis  = dict(title=dict(text="Participación %"), ticksuffix="%"),
         yaxis2 = dict(
-            title      = "Acumulado %",
+            title      = dict(text="Acumulado %"),
             overlaying = "y",
             side       = "right",
             range      = [0, 105],
             ticksuffix = "%",
-            gridcolor  = "transparent",
+            showgrid   = False,   # replaces gridcolor="transparent" which is invalid in Plotly 5.19+
         ),
-        barmode    = "group",
-        hovermode  = "x unified",
+        barmode   = "overlay",
+        hovermode = "x unified",
     )
     return fig
 
