@@ -1,0 +1,9 @@
+streamlit==1.32.0
+pandas==2.2.0
+plotly==5.19.0
+openpyxl>=3.1.5
+numpy==1.26.4
+faker==23.2.0
+pytest==8.0.0
+xlsxwriter==3.1.9
+python-dateutil==2.9.0

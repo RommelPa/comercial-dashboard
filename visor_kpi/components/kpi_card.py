@@ -1,0 +1,115 @@
+"""
+components/kpi_card.py
+======================
+Componente KPI Card reutilizable.
+Usa st.markdown con HTML/CSS para control total del estilo.
+"""
+
+import streamlit as st
+from config import get_color_semaforo, get_label_semaforo, fmt_pct, COLORS
+
+
+def render_kpi_card(
+    label: str,
+    value: str,
+    delta_pct: float | None   = None,
+    objetivo: str | None      = None,
+    cumplimiento: float | None = None,
+    width: str                 = "100%",
+    icon: str                  = "",
+) -> None:
+    """
+    Renderiza una KPI card con:
+    - Label en uppercase pequeño
+    - Valor principal grande
+    - Delta con flecha y color
+    - Barra de progreso vs objetivo
+    - Color de borde izquierdo según semáforo
+    """
+    sem_label = get_label_semaforo(cumplimiento) if cumplimiento is not None else "info"
+    sem_color = get_color_semaforo(cumplimiento) if cumplimiento is not None else COLORS["primary_light"]
+
+    # Delta HTML
+    delta_html = ""
+    if delta_pct is not None:
+        pct = delta_pct * 100
+        if pct > 0.05:
+            delta_html = f'<div class="kpi-delta positive">▲ +{pct:.1f}%</div>'
+        elif pct < -0.05:
+            delta_html = f'<div class="kpi-delta negative">▼ {pct:.1f}%</div>'
+        else:
+            delta_html = f'<div class="kpi-delta neutral">— 0.0%</div>'
+
+    # Barra de progreso
+    progress_html = ""
+    if cumplimiento is not None and objetivo is not None:
+        pct_bar = min(cumplimiento * 100, 100)
+        progress_html = f"""
+        <div class="kpi-progress-bar">
+            <div class="kpi-progress-fill" 
+                 style="width:{pct_bar:.1f}%; background:{sem_color}">
+            </div>
+        </div>
+        <div class="kpi-objetivo">
+            {fmt_pct(cumplimiento)} del objetivo {objetivo}
+        </div>
+        """
+
+    icon_html = f'<span style="font-size:20px;margin-right:6px">{icon}</span>' if icon else ""
+
+    html = f"""
+    <div class="kpi-card {sem_label}" style="width:{width}">
+        <div class="kpi-label">{icon_html}{label}</div>
+        <div class="kpi-value">{value}</div>
+        {delta_html}
+        {progress_html}
+    </div>
+    """
+    st.markdown(html, unsafe_allow_html=True)
+
+
+def render_kpi_card_simple(
+    label: str,
+    value: str,
+    delta_pct: float | None = None,
+    color: str | None = None,
+) -> None:
+    """Versión simplificada sin barra de progreso."""
+    border_color = color or COLORS["primary_light"]
+
+    delta_html = ""
+    if delta_pct is not None:
+        pct = delta_pct * 100
+        if pct > 0.05:
+            delta_html = f'<div class="kpi-delta positive">▲ +{pct:.1f}%</div>'
+        elif pct < -0.05:
+            delta_html = f'<div class="kpi-delta negative">▼ {pct:.1f}%</div>'
+        else:
+            delta_html = f'<div class="kpi-delta neutral">— 0.0%</div>'
+
+    html = f"""
+    <div class="kpi-card" style="border-left-color:{border_color}">
+        <div class="kpi-label">{label}</div>
+        <div class="kpi-value">{value}</div>
+        {delta_html}
+    </div>
+    """
+    st.markdown(html, unsafe_allow_html=True)
+
+
+def render_kpi_row(cards: list[dict]) -> None:
+    """
+    Renderiza una fila de KPI cards.
+    cards: lista de dicts con keys: label, value, delta_pct, objetivo, cumplimiento, icon
+    """
+    cols = st.columns(len(cards))
+    for col, card in zip(cols, cards):
+        with col:
+            render_kpi_card(
+                label        = card.get("label", ""),
+                value        = card.get("value", "—"),
+                delta_pct    = card.get("delta_pct"),
+                objetivo     = card.get("objetivo"),
+                cumplimiento = card.get("cumplimiento"),
+                icon         = card.get("icon", ""),
+            )

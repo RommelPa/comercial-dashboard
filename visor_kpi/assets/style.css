@@ -1,0 +1,390 @@
+/* =========================================================
+   VISOR KPI COMERCIAL — Estilos globales
+   Fuente: Inter (Google Fonts)
+   Tema: Dark mode profesional
+   ========================================================= */
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+/* ── Reset y base ─────────────────────────────────────────── */
+* {
+    font-family: 'Inter', sans-serif !important;
+}
+
+/* ── Ocultar elementos de Streamlit por defecto ──────────── */
+#MainMenu { visibility: hidden; }
+footer { visibility: hidden; }
+header { visibility: hidden; }
+.stDeployButton { display: none; }
+.viewerBadge_container__1QSob { display: none; }
+[data-testid="stToolbar"] { display: none; }
+
+/* ── Fondo principal ─────────────────────────────────────── */
+.stApp {
+    background-color: #0F1923;
+}
+
+.block-container {
+    padding-top: 1.5rem !important;
+    padding-bottom: 2rem !important;
+    max-width: 1400px;
+}
+
+/* ── Sidebar ─────────────────────────────────────────────── */
+[data-testid="stSidebar"] {
+    background-color: #1A2535 !important;
+    border-right: 1px solid #2D3F55;
+}
+
+[data-testid="stSidebar"] .stMarkdown p {
+    color: #F0F4F8;
+}
+
+[data-testid="stSidebar"] label {
+    color: #8899AA !important;
+    font-size: 12px !important;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* ── Scrollbar personalizada ─────────────────────────────── */
+::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+}
+::-webkit-scrollbar-track {
+    background: #0F1923;
+}
+::-webkit-scrollbar-thumb {
+    background: #2D3F55;
+    border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+    background: #2E5FA3;
+}
+
+/* ── KPI Cards ───────────────────────────────────────────── */
+.kpi-card {
+    background: #1A2535;
+    border-radius: 12px;
+    padding: 20px;
+    border-left: 4px solid #2E5FA3;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    animation: fadeIn 0.3s ease-in;
+    position: relative;
+    overflow: hidden;
+}
+
+.kpi-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+    background: #243044;
+}
+
+.kpi-card.success { border-left-color: #00C49F; }
+.kpi-card.warning { border-left-color: #FFB347; }
+.kpi-card.danger  { border-left-color: #E84855; }
+
+.kpi-label {
+    font-size: 11px;
+    font-weight: 600;
+    color: #8899AA;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 8px;
+}
+
+.kpi-value {
+    font-size: 30px;
+    font-weight: 700;
+    color: #F0F4F8;
+    line-height: 1.1;
+    margin-bottom: 8px;
+}
+
+.kpi-delta {
+    font-size: 13px;
+    font-weight: 500;
+    margin-bottom: 12px;
+}
+
+.kpi-delta.positive { color: #00C49F; }
+.kpi-delta.negative { color: #E84855; }
+.kpi-delta.neutral  { color: #8899AA; }
+
+.kpi-progress-bar {
+    height: 6px;
+    background: #2D3F55;
+    border-radius: 3px;
+    margin-bottom: 6px;
+    overflow: hidden;
+}
+
+.kpi-progress-fill {
+    height: 100%;
+    border-radius: 3px;
+    transition: width 0.5s ease;
+}
+
+.kpi-objetivo {
+    font-size: 11px;
+    color: #8899AA;
+}
+
+/* ── Animaciones ─────────────────────────────────────────── */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(8px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes slideIn {
+    from { opacity: 0; transform: translateX(-10px); }
+    to   { opacity: 1; transform: translateX(0); }
+}
+
+/* ── Tablas de ranking ───────────────────────────────────── */
+.ranking-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.ranking-table th {
+    font-size: 11px;
+    font-weight: 600;
+    color: #8899AA;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    padding: 10px 12px;
+    border-bottom: 1px solid #2D3F55;
+    text-align: left;
+}
+
+.ranking-table td {
+    padding: 10px 12px;
+    border-bottom: 1px solid #1E2D3D;
+    color: #F0F4F8;
+    font-size: 13px;
+    transition: background 0.15s ease;
+}
+
+.ranking-table tr:hover td {
+    background: #243044;
+}
+
+.ranking-table tr:last-child td {
+    border-bottom: none;
+}
+
+/* ── Badges ──────────────────────────────────────────────── */
+.badge {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 12px;
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.badge-success { background: rgba(0, 196, 159, 0.15); color: #00C49F; }
+.badge-warning { background: rgba(255, 179, 71, 0.15);  color: #FFB347; }
+.badge-danger  { background: rgba(232, 72, 85, 0.15);   color: #E84855; }
+.badge-info    { background: rgba(46, 95, 163, 0.15);   color: #2E5FA3; }
+.badge-a       { background: rgba(0, 196, 159, 0.15);   color: #00C49F; }
+.badge-b       { background: rgba(255, 179, 71, 0.15);  color: #FFB347; }
+.badge-c       { background: rgba(136, 153, 170, 0.15); color: #8899AA; }
+
+/* ── Alert cards ─────────────────────────────────────────── */
+.alert-card {
+    background: #1A2535;
+    border-radius: 10px;
+    padding: 16px;
+    margin-bottom: 12px;
+    border-left: 4px solid;
+    animation: slideIn 0.3s ease;
+}
+
+.alert-card.alta   { border-left-color: #E84855; }
+.alert-card.media  { border-left-color: #FFB347; }
+.alert-card.baja   { border-left-color: #2E5FA3; }
+.alert-card.info   { border-left-color: #00C49F; }
+
+.alert-card .alert-title {
+    font-size: 14px;
+    font-weight: 600;
+    color: #F0F4F8;
+    margin-bottom: 4px;
+}
+
+.alert-card .alert-detail {
+    font-size: 12px;
+    color: #8899AA;
+    margin-bottom: 8px;
+}
+
+.alert-card .alert-action {
+    font-size: 12px;
+    color: #2E5FA3;
+    font-style: italic;
+}
+
+/* ── Títulos de sección ──────────────────────────────────── */
+.section-title {
+    font-size: 20px;
+    font-weight: 600;
+    color: #F0F4F8;
+    margin-bottom: 16px;
+    padding-bottom: 8px;
+    border-bottom: 2px solid #2D3F55;
+}
+
+.section-subtitle {
+    font-size: 14px;
+    color: #8899AA;
+    margin-bottom: 12px;
+}
+
+/* ── Insight box ─────────────────────────────────────────── */
+.insight-box {
+    background: linear-gradient(135deg, #1A2535, #243044);
+    border: 1px solid #2D3F55;
+    border-radius: 12px;
+    padding: 20px;
+    margin: 16px 0;
+    font-size: 14px;
+    color: #F0F4F8;
+    line-height: 1.7;
+}
+
+.insight-box strong { color: #00C49F; }
+
+/* ── Posición ranking vendedor ───────────────────────────── */
+.ranking-position-box {
+    background: #1A2535;
+    border-radius: 12px;
+    padding: 20px;
+    text-align: center;
+    border: 1px solid #2D3F55;
+}
+
+.ranking-position-number {
+    font-size: 56px;
+    font-weight: 700;
+    color: #2E5FA3;
+    line-height: 1;
+}
+
+.ranking-position-label {
+    font-size: 13px;
+    color: #8899AA;
+    margin-top: 4px;
+}
+
+/* ── Métricas Streamlit (overrides) ─────────────────────── */
+[data-testid="metric-container"] {
+    background: #1A2535;
+    border-radius: 12px;
+    padding: 16px;
+    border-left: 4px solid #2E5FA3;
+}
+
+[data-testid="stMetricValue"] {
+    color: #F0F4F8 !important;
+    font-weight: 700 !important;
+}
+
+[data-testid="stMetricLabel"] {
+    color: #8899AA !important;
+    font-size: 12px !important;
+    text-transform: uppercase;
+}
+
+/* ── Selectbox y inputs ──────────────────────────────────── */
+.stSelectbox > div > div {
+    background: #1A2535 !important;
+    border-color: #2D3F55 !important;
+    color: #F0F4F8 !important;
+}
+
+.stMultiSelect > div > div {
+    background: #1A2535 !important;
+    border-color: #2D3F55 !important;
+}
+
+.stDateInput > div > div > input {
+    background: #1A2535 !important;
+    border-color: #2D3F55 !important;
+    color: #F0F4F8 !important;
+}
+
+/* ── Botones ─────────────────────────────────────────────── */
+.stButton > button {
+    background: #2E5FA3 !important;
+    color: #F0F4F8 !important;
+    border: none !important;
+    border-radius: 8px !important;
+    font-weight: 500 !important;
+    transition: background 0.2s ease !important;
+}
+
+.stButton > button:hover {
+    background: #1B3A6B !important;
+}
+
+/* ── Dataframe ───────────────────────────────────────────── */
+[data-testid="stDataFrame"] {
+    background: #1A2535;
+    border-radius: 10px;
+}
+
+/* ── Tabs ────────────────────────────────────────────────── */
+.stTabs [data-baseweb="tab-list"] {
+    background: #1A2535;
+    border-radius: 8px;
+    gap: 4px;
+}
+
+.stTabs [data-baseweb="tab"] {
+    background: transparent;
+    color: #8899AA;
+    border-radius: 6px;
+    padding: 8px 16px;
+    font-size: 13px;
+}
+
+.stTabs [aria-selected="true"] {
+    background: #2E5FA3 !important;
+    color: #F0F4F8 !important;
+}
+
+/* ── Expander ────────────────────────────────────────────── */
+[data-testid="stExpander"] {
+    background: #1A2535;
+    border: 1px solid #2D3F55;
+    border-radius: 10px;
+}
+
+/* ── Responsive (mobile) ─────────────────────────────────── */
+@media (max-width: 768px) {
+    .kpi-value {
+        font-size: 22px;
+    }
+    .kpi-card {
+        padding: 14px;
+    }
+    .block-container {
+        padding-left: 12px !important;
+        padding-right: 12px !important;
+    }
+    .ranking-table {
+        font-size: 11px;
+    }
+    .ranking-table th,
+    .ranking-table td {
+        padding: 8px 6px;
+    }
+    .stButton > button {
+        width: 100%;
+        padding: 12px !important;
+    }
+}
