@@ -1,6 +1,6 @@
 # 📊 Visor KPI Comercial — Sales Intelligence Dashboard
 
-> **Transforming raw Excel sales data into automated commercial intelligence, real-time KPI monitoring and actionable business alerts for FMCG distribution teams.**
+> **De planillas de Excel a inteligencia comercial accionable: un dashboard que transforma datos de ventas en decisiones de negocio.**
 
 [![Python](https://img.shields.io/badge/Python-3.10%2B-blue?logo=python)](https://python.org)
 [![Streamlit](https://img.shields.io/badge/Streamlit-1.32-red?logo=streamlit)](https://streamlit.io)
@@ -8,43 +8,104 @@
 [![Pandas](https://img.shields.io/badge/Pandas-2.2-150458?logo=pandas)](https://pandas.pydata.org)
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 
+🔗 **[Ver demo interactiva →](https://excel-to-kpi-dashboard.streamlit.app/)**
+
 ---
 
 ## 🎯 ¿Qué problema resuelve?
 
-Los equipos comerciales en distribuidoras de consumo masivo pierden **horas semanales** consolidando archivos Excel manualmente, sin visibilidad en tiempo real del rendimiento de vendedores, clientes y productos.
+Muchas empresas de distribución siguen manejando su información comercial con múltiples archivos Excel, reportes manuales y horas de trabajo invertidas en consolidar datos que llegan tarde, dispersos y con errores.
 
-**Visor KPI Comercial** automatiza ese proceso de punta a punta:
+El problema real no es solo el esfuerzo operativo: **cuando los datos están dispersos, tomar buenas decisiones comerciales se vuelve difícil y lento.**
+
+**Visor KPI Comercial** resuelve exactamente eso:
 
 - **Elimina el análisis manual** → convierte archivos Excel de ventas en KPIs procesados automáticamente
 - **Centraliza la inteligencia comercial** → gerentes y vendedores acceden a sus métricas desde un único dashboard
 - **Anticipa problemas** → un motor de alertas detecta caídas de rendimiento, clientes en riesgo y oportunidades de crecimiento antes de que impacten en los resultados
-- **Democratiza los datos** → cada vendedor accede a su propio reporte individual; la gerencia obtiene la vista consolidada
+- **Democratiza los datos** → cada vendedor accede a su propio reporte individual; la gerencia obtiene la vista consolidada del equipo completo
 
 ---
 
-## 🚀 Quick Start
+## 💡 ¿Qué preguntas de negocio responde?
 
-```bash
-# 1. Clonar el repositorio
-git clone https://github.com/ricardobing/excel-to-kpi-dashboard.git
-cd excel-to-kpi-dashboard
+Este sistema está diseñado para responder las preguntas que más importan en un equipo comercial:
 
-# 2. Crear entorno virtual (Python 3.10–3.12 recomendado)
-python -m venv .venv
-.venv\Scripts\activate          # Windows
-# source .venv/bin/activate     # macOS/Linux
+- ¿Qué vendedores están superando o quedando por debajo del objetivo?
+- ¿Qué clientes concentran la mayor parte de la facturación?
+- ¿Qué productos impulsan realmente el negocio?
+- ¿Dónde hay oportunidades o riesgos en la cartera comercial?
+- ¿Qué clientes están en riesgo de dejar de comprar?
+- ¿Qué alertas requieren acción inmediata de parte del equipo?
 
-# 3. Instalar dependencias
-pip install -r visor_kpi/requirements.txt
+---
 
-# 4. Generar datos mock (primera vez)
-cd visor_kpi
-python data/mock/generate_mock_data.py
+## 📐 Contexto y Origen del Proyecto
 
-# 5. Lanzar la app
-streamlit run app.py
-```
+**Visor KPI Comercial** nació de una necesidad real en distribuidoras de consumo masivo: los equipos de ventas dependían de análisis manuales en Excel que consumían tiempo, introducían errores y no escalaban.
+
+El proyecto tomó como punto de partida un archivo Excel existente con la lógica comercial ya definida, y lo transformó en un sistema automatizado end-to-end:
+
+- **Cada vendedor** accede a su reporte individual: posición en el ranking, cartera de clientes y productos top
+- **La gerencia** obtiene una vista consolidada del equipo con alertas accionables y análisis de tendencias
+
+El resultado reduce el tiempo de generación de reportes **de horas a segundos**, y convierte datos históricos de ventas en decisiones comerciales informadas.
+
+---
+
+## 📊 Vistas del Sistema
+
+### 🏠 Resumen Ejecutivo
+**Lo que ven:** KPIs del negocio en una sola pantalla — ventas totales, cumplimiento de objetivos, margen bruto y cobertura de clientes, con rankings de los mejores vendedores, clientes y productos del período.
+
+**Para qué sirve:** permite a cualquier decisor entender en segundos cómo está el negocio, sin necesidad de abrir una sola planilla.
+
+![Resumen Ejecutivo](https://i.imgur.com/wiTuF3V.png)
+
+---
+
+### 📋 Vista Gerencial
+**Lo que ven:** evolución mensual del equipo completo, comparativa de rendimiento entre vendedores, y ranking con variación vs. período anterior.
+
+**Para qué sirve:** da a la gerencia una visión integral del equipo comercial para identificar tendencias, detectar quién necesita acompañamiento y dónde están las oportunidades de mejora.
+
+![Vista Gerencial](https://i.imgur.com/ihZtSyO.png)
+
+---
+
+### 👤 Vista por Vendedor
+**Lo que ven:** cada comercial accede a su propio dashboard con su cumplimiento de cuota, posición en el ranking del equipo, evolución personal de ventas y detalle de su cartera.
+
+**Para qué sirve:** elimina la necesidad de que el vendedor espere un reporte externo — tiene su información disponible en tiempo real, con contexto de cómo está parado respecto al equipo.
+
+![Vista Vendedores](https://i.imgur.com/Y3zoo5i.png)
+
+---
+
+### 🧑‍🤝‍🧑 Análisis de Clientes
+**Lo que ven:** segmentación Pareto A/B/C de la cartera, scatter de frecuencia vs. importe, índice de concentración Gini, e identificación de clientes en riesgo de inactividad.
+
+**Para qué sirve:** responde una de las preguntas más críticas del negocio: ¿qué clientes realmente sostienen la facturación y cuáles están en riesgo de perderlos? Con esto, el equipo puede priorizar visitas y esfuerzo comercial.
+
+![Análisis de Clientes](https://i.imgur.com/Ocoet7l.png)
+
+---
+
+### 📦 Análisis de Productos
+**Lo que ven:** treemap del portafolio por categoría y volumen, Pareto de productos, identificación de SKUs sin movimiento y análisis de tendencia por producto.
+
+**Para qué sirve:** permite detectar qué productos impulsan el negocio, cuáles tienen baja rotación y dónde hay oportunidades para hacer crecer el ticket promedio.
+
+![Análisis de Productos](https://i.imgur.com/RUjpUm3.png)
+
+---
+
+### 🚨 Centro de Alertas y Oportunidades
+**Lo que ven:** hub unificado con alertas activas clasificadas por severidad (crítica, media, baja) y oportunidades detectadas automáticamente, con acciones sugeridas para cada caso.
+
+**Para qué sirve:** convierte el monitoreo reactivo en gestión proactiva — en lugar de descubrir un problema cuando ya impactó en los resultados, el equipo recibe alertas tempranas con contexto y próximo paso recomendado.
+
+![Centro de Alertas](https://i.imgur.com/tVNNNzK.png)
 
 ---
 
@@ -104,30 +165,7 @@ Cálculo automatizado de los indicadores comerciales más críticos:
 
 ---
 
-## 📊 Páginas del Dashboard
-
-### 🏠 Resumen Ejecutivo (`app.py`)
-Vista de alto nivel para decisores. Incluye 4 KPI cards con semáforo de estado, gauge de cumplimiento, evolución mensual de ventas, rankings top-5 de vendedores / clientes / productos y panel de alertas activas.
-
-### 📋 Vista Gerencial (`1_gerencia.py`)
-Consolidado del equipo completo. Gráficos de evolución temporal, comparativa de rendimiento entre vendedores, heatmap de ventas por mes y zona, y ranking completo con delta vs mes anterior.
-
-### 👤 Vista por Vendedor (`2_vendedores.py`)
-Dashboard individual para cada comercial. Gauge de cumplimiento personal vs promedio del equipo, posición en el ranking con indicador de movimiento, detalle de cartera propia y productos top.
-
-### 🧑‍🤝‍🧑 Análisis de Clientes (`3_clientes.py`)
-Inteligencia de cartera completa. Segmentación Pareto A/B/C con gráfico acumulado y scatter, índice Gini, identificación de clientes en riesgo de churn y oportunidades de crecimiento con detalle expandible.
-
-### 📦 Análisis de Productos (`4_productos.py`)
-Visibilidad del portafolio. Treemap por categoría y volumen de ventas, Pareto de productos con baja rotación, filtros por categoría y análisis de tendencia de crecimiento por SKU.
-
-### 🚨 Centro de Alertas (`5_alertas.py`)
-Hub de acción comercial. Visualización de las 7 reglas ALT001–ALT007, filtrado por severidad y tipo, marcado de alertas como revisadas con persistencia en session state e historial de acciones.
-
----
-
 ## 🗂️ Arquitectura del Proyecto
-
 ```
 visor_kpi/
 ├── app.py                     # Resumen Ejecutivo (página principal)
@@ -191,8 +229,31 @@ visor_kpi/
 
 ---
 
-## 🧪 Testing
+## 🚀 Quick Start
+```bash
+# 1. Clonar el repositorio
+git clone https://github.com/ricardobing/excel-to-kpi-dashboard.git
+cd excel-to-kpi-dashboard
 
+# 2. Crear entorno virtual (Python 3.10–3.12 recomendado)
+python -m venv .venv
+.venv\Scripts\activate          # Windows
+# source .venv/bin/activate     # macOS/Linux
+
+# 3. Instalar dependencias
+pip install -r visor_kpi/requirements.txt
+
+# 4. Generar datos mock (primera vez)
+cd visor_kpi
+python data/mock/generate_mock_data.py
+
+# 5. Lanzar la app
+streamlit run app.py
+```
+
+---
+
+## 🧪 Testing
 ```bash
 cd visor_kpi
 pytest tests/ -v
@@ -213,19 +274,6 @@ La suite cubre:
 - **Semáforo de estado**: `success=#00C49F` · `warning=#FFB347` · `danger=#E84855`
 - **Tipografía**: Inter via Google Fonts
 - **Responsive**: breakpoint en 768px, optimizado para uso en tablet y mobile
-
----
-
-## 📐 Contexto y Origen del Proyecto
-
-**Visor KPI Comercial** nació de una necesidad real en distribuidoras de consumo masivo: los equipos de ventas dependían de análisis manuales en Excel que consumían tiempo, introducían errores y no escalaban.
-
-El proyecto tomó como punto de partida un archivo Excel existente ("Clientes SF 2023") con la lógica comercial ya definida, y lo transformó en un sistema automatizado end-to-end que entrega:
-
-- **A cada vendedor**: su reporte individual con su posición en el ranking, su cartera de clientes y sus productos top
-- **A la gerencia**: una vista consolidada del equipo completo con alertas accionables y análisis de tendencias
-
-El resultado es una plataforma de **Sales Intelligence** que reduce el tiempo de generación de reportes de horas a segundos, y convierte datos históricos de ventas en decisiones comerciales informadas.
 
 ---
 
