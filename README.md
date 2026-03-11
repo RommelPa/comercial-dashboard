@@ -8,7 +8,7 @@
 [![Pandas](https://img.shields.io/badge/Pandas-2.2-150458?logo=pandas)](https://pandas.pydata.org)
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 
-🔗 **[Ver demo interactiva →](https://excel-to-kpi-dashboard.streamlit.app/)**
+🔗 **[Ver Aplicacion Completa interactiva →](https://excel-to-kpi-dashboard.streamlit.app/)**
 
 ---
 
