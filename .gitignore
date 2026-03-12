@@ -46,7 +46,7 @@ Thumbs.db
 
 # Excel raw data (generado localmente, no commitear datos sensibles)
 # Comentar esta línea si se quiere incluir el mock en el repo
-# visor_kpi/data/raw/mock_data.xlsx
+visor_kpi/data/raw/mock_data.xlsx
 
 # Logs
 *.log
