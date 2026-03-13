@@ -42,12 +42,26 @@ GO
 
 
 CREATE OR ALTER VIEW kpi.vw_margen_total AS
+WITH ventas AS (
+    SELECT
+        ID_FECHA,
+        SUM(IMPORTE_SOLES) AS ingresos
+    FROM fact.FACT_VENTA
+    GROUP BY ID_FECHA
+),
+compras AS (
+    SELECT
+        ID_FECHA,
+        SUM(IMPORTE_SOLES) AS costos
+    FROM fact.FACT_COMPRA
+    GROUP BY ID_FECHA
+)
 SELECT
-    SUM(v.IMPORTE_SOLES) AS ingresos,
-    SUM(c.IMPORTE_SOLES) AS costos,
-    SUM(v.IMPORTE_SOLES) - SUM(c.IMPORTE_SOLES) AS margen
-FROM fact.FACT_VENTA v
-LEFT JOIN fact.FACT_COMPRA c
+    SUM(COALESCE(v.ingresos, 0)) AS ingresos,
+    SUM(COALESCE(c.costos, 0)) AS costos,
+    SUM(COALESCE(v.ingresos, 0)) - SUM(COALESCE(c.costos, 0)) AS margen
+FROM ventas v
+FULL JOIN compras c
 ON v.ID_FECHA = c.ID_FECHA
 GO
 
@@ -119,12 +133,26 @@ GO
 
 
 CREATE OR ALTER VIEW kpi.vw_balance_energia AS
+WITH ventas AS (
+    SELECT
+        ID_FECHA,
+        SUM(ENERGIA_MWH) AS energia_vendida
+    FROM fact.FACT_VENTA
+    GROUP BY ID_FECHA
+),
+compras AS (
+    SELECT
+        ID_FECHA,
+        SUM(ENERGIA_MWH) AS energia_comprada
+    FROM fact.FACT_COMPRA
+    GROUP BY ID_FECHA
+)
 SELECT
-    SUM(v.ENERGIA_MWH) AS energia_vendida,
-    SUM(c.ENERGIA_MWH) AS energia_comprada,
-    SUM(v.ENERGIA_MWH) - SUM(c.ENERGIA_MWH) AS balance
-FROM fact.FACT_VENTA v
-LEFT JOIN fact.FACT_COMPRA c
+    SUM(COALESCE(v.energia_vendida, 0)) AS energia_vendida,
+    SUM(COALESCE(c.energia_comprada, 0)) AS energia_comprada,
+    SUM(COALESCE(v.energia_vendida, 0)) - SUM(COALESCE(c.energia_comprada, 0)) AS balance
+FROM ventas v
+FULL JOIN compras c
 ON v.ID_FECHA = c.ID_FECHA
 GO
 
