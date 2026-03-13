@@ -1,6 +1,6 @@
 # ⚡ Comercial Dashboard | BI End-to-End
 
-Proyecto de **Data Engineering + Analytics Engineering + BI** con arquitectura estable:
+Proyecto de **Data Engineering + BI** con flujo productivo:
 
 ```text
 Excel
@@ -9,57 +9,16 @@ Excel
   → Streamlit Dashboard
 ```
 
-## 1) Arquitectura del proyecto
+## Arquitectura
 
-### Fuentes y ETL
-- Fuente principal: Excel.
-- Carga y transformación inicial a staging: `etl.load_stg`.
-- Construcción del Data Warehouse: `etl.run_dw`.
-- Creación de vistas KPI en schema `kpi`: `etl.create_kpis`.
+- **Fuente**: Excel (`visor_kpi/data/raw/DATA_WAREHOUSE.xlsx`).
+- **Pipeline ETL**:
+  1. `etl.load_stg` (carga `stg`)
+  2. `etl.run_dw` (transforma a `dim` y `fact`)
+  3. `etl.create_kpis` (crea vistas en `kpi`)
+- **Dashboard**: Streamlit multipágina consumiendo vistas del schema `kpi` vía `src/data_access.py`.
 
-### Data Warehouse
-- `stg`: staging tables cargadas desde Excel.
-- `dim`: dimensiones (fecha, cliente, mercado, central, tipo de central, división, frecuencia).
-- `fact`: hechos (ventas, compras, producción).
-- `kpi`: vistas analíticas consumidas por Streamlit.
-
-### Dashboard
-- App multipágina en Streamlit:
-  - Overview
-  - Comercial
-  - Operaciones
-  - Gestión
-- Capa de acceso a datos centralizada en `visor_kpi/src/`.
-
-## 2) Flujo del pipeline
-
-Comando principal (sin cambios):
-
-```bash
-python -m etl.pipeline
-```
-
-Secuencia interna actual:
-1. `etl.load_stg`
-2. `etl.run_dw`
-3. `etl.create_kpis`
-
-## 3) Configuración de base de datos (segura)
-
-El dashboard lee conexión desde Streamlit secrets:
-
-**Archivo:** `.streamlit/secrets.toml`
-
-```toml
-[db]
-server = "PC-PRACCOM\\SQLEXPRESS"
-database = "DATA_WAREHOUSE"
-driver = "ODBC Driver 17 for SQL Server"
-```
-
-La conexión usa Windows Authentication (`trusted_connection=yes`) sin usuario/password.
-
-## 4) Estructura del repositorio
+## Estructura final
 
 ```text
 visor_kpi/
@@ -72,41 +31,71 @@ visor_kpi/
   src/
     database.py
     data_access.py
-    filters.py
     queries.py
     charts.py
-  sql/
-    create_kpis.sql
-    views_dashboard.sql
+    filters.py
   etl/
     pipeline.py
     load_stg.py
     run_dw.py
     create_kpis.py
+  sql/
+    sp_cargar_dw.sql
+    views_dashboard.sql
+    create_kpis.sql
+  assets/
+    style.css
+  tests/
+    test_smoke_dashboard_modules.py
 ```
 
-## 5) Vistas KPI consumidas por la app
+## Esquemas del DW
 
-- `kpi.vw_energia_vendida_mes`
-- `kpi.vw_ingresos_mes`
-- `kpi.vw_margen_total`
-- `kpi.vw_margen_cliente`
-- `kpi.vw_ingresos_mercado`
-- `kpi.vw_produccion_total`
-- `kpi.vw_produccion_central`
-- `kpi.vw_produccion_tipo_central`
-- `kpi.vw_balance_energia`
-- `kpi.vw_actividades_division`
-- `kpi.vw_reportes_frecuencia`
-- `kpi.vw_actividades_criticas`
-- `kpi.vw_actividades_proximas`
+- `stg`: staging cargado desde Excel.
+- `dim`: dimensiones de negocio.
+- `fact`: tablas de hechos.
+- `kpi`: vistas analíticas para BI.
 
-## 6) Ejecutar dashboard
+## Requisitos
+
+Instalar dependencias:
+
+```bash
+pip install -r requirements.txt
+```
+
+Dependencias principales:
+- `streamlit`
+- `pandas`
+- `sqlalchemy`
+- `pyodbc`
+- `plotly`
+- `openpyxl`
+
+## Cómo ejecutar el pipeline
+
+Desde la raíz del repo:
+
+```bash
+cd visor_kpi
+python -m etl.pipeline
+```
+
+## Cómo ejecutar el dashboard
+
+Desde la raíz del repo:
 
 ```bash
 streamlit run visor_kpi/app.py
 ```
 
-## 7) Notas de calidad de datos
+Configurar `.streamlit/secrets.toml` con:
 
-Las vistas críticas `kpi.vw_margen_total` y `kpi.vw_balance_energia` usan agregación previa por fecha (CTEs) antes del `FULL JOIN`, evitando duplicación por multiplicación de filas entre hechos.
+```toml
+[db]
+server = "PC-PRACCOM\\SQLEXPRESS"
+database = "DATA_WAREHOUSE"
+driver = "ODBC Driver 17 for SQL Server"
+```
+
+La conexión usa `trusted_connection=yes`.

@@ -1,15 +1,15 @@
 import subprocess
 import sys
 
-print("----- INICIANDO PIPELINE -----")
 
-print("1️⃣ Cargando STG...")
-subprocess.run([sys.executable, "-m", "etl.load_stg"])
+def run_stage(module: str, label: str) -> None:
+    print(label)
+    subprocess.run([sys.executable, "-m", module], check=True)
 
-print("2️⃣ Procesando Data Warehouse...")
-subprocess.run([sys.executable, "-m", "etl.run_dw"])
 
-print("3️⃣ Creando KPIs...")
-subprocess.run([sys.executable, "-m", "etl.create_kpis"])
-
-print("PIPELINE COMPLETADO")
+if __name__ == "__main__":
+    print("----- INICIANDO PIPELINE -----")
+    run_stage("etl.load_stg", "1️⃣ Cargando STG...")
+    run_stage("etl.run_dw", "2️⃣ Procesando Data Warehouse...")
+    run_stage("etl.create_kpis", "3️⃣ Creando KPIs...")
+    print("PIPELINE COMPLETADO")
