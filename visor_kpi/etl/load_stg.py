@@ -1,7 +1,7 @@
 import pandas as pd
 from sqlalchemy import create_engine, text
 
-server = "PC-PRACCOM\SQLEXPRESS"
+server = r"PC-PRACCOM\SQLEXPRESS"
 database = "DATA_WAREHOUSE"
 
 connection_string = (
