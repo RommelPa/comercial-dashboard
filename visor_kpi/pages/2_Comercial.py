@@ -1,33 +1,38 @@
 import streamlit as st
 
-from src.charts import bar, line
-from src.data_access import get_ingresos_mercado, get_ingresos_mes, get_margen_cliente
+from src.charts import bar, line, pie
+from src.data_access import (
+    get_filter_options,
+    get_ingresos_mercado,
+    get_ingresos_mes,
+    get_margen_cliente,
+)
+from src.filters import render_global_filters
 
 st.title("Comercial")
+st.caption("¿Cuánta energía vendimos por mes? ¿Cuál es el margen por cliente? ¿Qué mercado aporta más ingreso?")
 
-ingresos_mes = get_ingresos_mes()
-margen_cliente = get_margen_cliente()
-ingresos_mercado = get_ingresos_mercado()
+filters = render_global_filters(get_filter_options())
+
+ingresos_mes = get_ingresos_mes(filters)
+margen_cliente = get_margen_cliente(filters)
+ingresos_mercado = get_ingresos_mercado(filters)
 
 if not ingresos_mes.empty:
     ingresos_plot = ingresos_mes.copy()
     ingresos_plot["periodo"] = (
         ingresos_plot["ANIO"].astype(str) + "-" + ingresos_plot["MES"].astype(int).astype(str).str.zfill(2)
     )
-    st.plotly_chart(line(ingresos_plot, "periodo", "ingresos", "Ingresos mensuales"), use_container_width=True)
+    st.plotly_chart(line(ingresos_plot, "periodo", "ingresos", "Ventas mensuales"), use_container_width=True)
 
 if not margen_cliente.empty:
-    top_n = st.slider("Top clientes por ingresos", min_value=5, max_value=50, value=20, step=5)
     st.plotly_chart(
-        bar(margen_cliente.head(top_n), "NOMBRE_CLIENTE", "ingresos", f"Ingresos por cliente (Top {top_n})"),
+        bar(margen_cliente, "NOMBRE_CLIENTE", "ingresos", "Margen por cliente"),
         use_container_width=True,
     )
 
 if not ingresos_mercado.empty:
     st.plotly_chart(
-        bar(ingresos_mercado, "DESCRIPCION_MERCADO", "ingresos", "Ingresos por mercado"),
+        pie(ingresos_mercado, "DESCRIPCION_MERCADO", "ingresos", "Ingresos por mercado"),
         use_container_width=True,
     )
-
-st.subheader("Tabla de margen por cliente")
-st.dataframe(margen_cliente, use_container_width=True)

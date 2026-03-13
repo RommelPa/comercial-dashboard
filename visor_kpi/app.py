@@ -5,20 +5,16 @@ st.set_page_config(page_title="Energy DW Analytics", page_icon="⚡", layout="wi
 st.title("⚡ Energy Data Warehouse Dashboard")
 st.markdown(
     """
-Dashboard analítico conectado al Data Warehouse de energía eléctrica.
+Dashboard BI profesional conectado al Data Warehouse de energía eléctrica.
 
-**Flujo de datos:** Excel → ETL Python → SQL Server (DIM/FACT) → Vistas KPI (`kpi.*`) → Streamlit.
+**Flujo de datos:** Excel → ETL Python (`etl.load_stg` → `etl.run_dw` → `etl.create_kpis`) → SQL Server (`stg`, `dim`, `fact`, `kpi`) → Streamlit.
 
-**Conexión SQL Server (centralizada en `src/database.py`):**
-- Server: `PC-PRACCOM\\SQLEXPRESS`
-- Database: `DATA_WAREHOUSE`
-- Auth: Windows Authentication (`trusted_connection=yes`)
-- Driver: `ODBC Driver 17 for SQL Server`
+La conexión SQL Server se centraliza en `src/database.py` y se configura por `st.secrets["db"]`.
 
-Usa el menú lateral para navegar por:
+Navega en el menú lateral por:
 - Overview
 - Comercial
 - Operaciones
-- Gestión de obligaciones
+- Gestión
 """
 )

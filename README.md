@@ -1,45 +1,91 @@
-# ⚡ excel-to-kpi-dashboard | Energy DW Analytics
+# ⚡ Comercial Dashboard | BI End-to-End
 
-Proyecto de portafolio orientado a **Data Engineering + Analytics Engineering + BI**.
-
-## Arquitectura
+Proyecto de **Data Engineering + Analytics Engineering + BI** con arquitectura estable:
 
 ```text
-Excel (DATA_WAREHOUSE.xlsx)
-   ↓
-ETL Python (load_stg.py → run_dw.py → create_kpis.py)
-   ↓
-SQL Server DATA_WAREHOUSE (stg, dim, fact, kpi)
-   ↓
-Streamlit Dashboard
+Excel
+  → ETL Python
+  → SQL Server Data Warehouse (stg, dim, fact, kpi)
+  → Streamlit Dashboard
 ```
 
-## Pipeline ETL
+## 1) Arquitectura del proyecto
 
-El pipeline ETL existente se ejecuta con:
+### Fuentes y ETL
+- Fuente principal: Excel.
+- Carga y transformación inicial a staging: `etl.load_stg`.
+- Construcción del Data Warehouse: `etl.run_dw`.
+- Creación de vistas KPI en schema `kpi`: `etl.create_kpis`.
+
+### Data Warehouse
+- `stg`: staging tables cargadas desde Excel.
+- `dim`: dimensiones (fecha, cliente, mercado, central, tipo de central, división, frecuencia).
+- `fact`: hechos (ventas, compras, producción).
+- `kpi`: vistas analíticas consumidas por Streamlit.
+
+### Dashboard
+- App multipágina en Streamlit:
+  - Overview
+  - Comercial
+  - Operaciones
+  - Gestión
+- Capa de acceso a datos centralizada en `visor_kpi/src/`.
+
+## 2) Flujo del pipeline
+
+Comando principal (sin cambios):
 
 ```bash
 python -m etl.pipeline
 ```
 
-> Este repositorio mantiene el ETL sin cambios y consume datos desde el esquema `kpi`.
+Secuencia interna actual:
+1. `etl.load_stg`
+2. `etl.run_dw`
+3. `etl.create_kpis`
 
-## Conexión SQL Server del dashboard
+## 3) Configuración de base de datos (segura)
 
-La aplicación usa **Windows Authentication** y conexión centralizada en `visor_kpi/src/database.py`:
+El dashboard lee conexión desde Streamlit secrets:
 
-```python
+**Archivo:** `.streamlit/secrets.toml`
+
+```toml
+[db]
 server = "PC-PRACCOM\\SQLEXPRESS"
 database = "DATA_WAREHOUSE"
-
-connection_string = (
-    f"mssql+pyodbc://@{server}/{database}"
-    "?driver=ODBC+Driver+17+for+SQL+Server"
-    "&trusted_connection=yes"
-)
+driver = "ODBC Driver 17 for SQL Server"
 ```
 
-## Vistas KPI consumidas por la app
+La conexión usa Windows Authentication (`trusted_connection=yes`) sin usuario/password.
+
+## 4) Estructura del repositorio
+
+```text
+visor_kpi/
+  app.py
+  pages/
+    1_Overview.py
+    2_Comercial.py
+    3_Operaciones.py
+    4_Gestion_obligaciones.py
+  src/
+    database.py
+    data_access.py
+    filters.py
+    queries.py
+    charts.py
+  sql/
+    create_kpis.sql
+    views_dashboard.sql
+  etl/
+    pipeline.py
+    load_stg.py
+    run_dw.py
+    create_kpis.py
+```
+
+## 5) Vistas KPI consumidas por la app
 
 - `kpi.vw_energia_vendida_mes`
 - `kpi.vw_ingresos_mes`
@@ -55,26 +101,12 @@ connection_string = (
 - `kpi.vw_actividades_criticas`
 - `kpi.vw_actividades_proximas`
 
-Definidas/actualizadas en:
-
-- `visor_kpi/sql/views_dashboard.sql`
-
-## Páginas del dashboard
-
-- `Overview`
-- `Comercial`
-- `Operaciones`
-- `Gestión de obligaciones`
-
-## Ejecutar
+## 6) Ejecutar dashboard
 
 ```bash
 streamlit run visor_kpi/app.py
 ```
 
-## Screenshots (placeholders)
+## 7) Notas de calidad de datos
 
-- `![Overview](docs/screenshots/overview.png)`
-- `![Comercial](docs/screenshots/comercial.png)`
-- `![Operaciones](docs/screenshots/operaciones.png)`
-- `![Gestión](docs/screenshots/gestion.png)`
+Las vistas críticas `kpi.vw_margen_total` y `kpi.vw_balance_energia` usan agregación previa por fecha (CTEs) antes del `FULL JOIN`, evitando duplicación por multiplicación de filas entre hechos.
