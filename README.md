@@ -1,119 +1,64 @@
 # ⚡ excel-to-kpi-dashboard | Energy DW Analytics
 
-Proyecto de portafolio que integra **Data Engineering + Analytics Engineering + BI**:
-
-**Excel → ETL Python → SQL Server DWH → Vistas KPI → Dashboard Streamlit**
+Proyecto de portafolio orientado a **Data Engineering + Analytics Engineering + BI**.
 
 ## Arquitectura
 
 ```text
-DATA_WAREHOUSE.xlsx
+Excel (DATA_WAREHOUSE.xlsx)
    ↓
-etl/load_stg.py
+ETL Python (load_stg.py → run_dw.py → create_kpis.py)
    ↓
-stg.*
+SQL Server DATA_WAREHOUSE (stg, dim, fact, kpi)
    ↓
-etl/run_dw.py  (sp_cargar_dw)
-   ↓
-dim.* + fact.*
-   ↓
-etl/create_kpis.py + sql/views_dashboard.sql
-   ↓
-kpi.*
-   ↓
-Streamlit Dashboard (Overview / Comercial / Operaciones / Gestión)
+Streamlit Dashboard
 ```
 
-## Pipeline ETL (no modificado)
+## Pipeline ETL
 
-Ejecución:
+El pipeline ETL existente se ejecuta con:
 
 ```bash
 python -m etl.pipeline
 ```
 
-Flujo:
-1. Carga de Excel a staging (`stg.*`).
-2. Ejecución de `sp_cargar_dw` para poblar modelo dimensional.
-3. Creación/actualización de vistas KPI en schema `kpi`.
+> Este repositorio mantiene el ETL sin cambios y consume datos desde el esquema `kpi`.
 
-## Modelo dimensional
+## Conexión SQL Server del dashboard
 
-### Dimensiones
-- `dim.DIM_CLIENTE`
-- `dim.DIM_TIPO_CONTRATO`
-- `dim.DIM_MERCADO`
-- `dim.DIM_DIVISION`
-- `dim.DIM_FRECUENCIA`
-- `dim.DIM_FECHA`
-- `dim.DIM_TIPO_CENTRAL`
-- `dim.DIM_CENTRAL`
-- `dim.DIM_CONCEPTO`
+La aplicación usa **Windows Authentication** y conexión centralizada en `visor_kpi/src/database.py`:
 
-### Hechos
-- `fact.FACT_VENTA`
-- `fact.FACT_COMPRA`
-- `fact.FACT_PRODUCCION`
-- `fact.FACT_CONSUMO_TIPO_CENTRAL`
-- `fact.FACT_MOVIMIENTO_CONCEPTO`
-- `fact.FACT_INDICADOR_MENSUAL`
+```python
+server = "PC-PRACCOM\\SQLEXPRESS"
+database = "DATA_WAREHOUSE"
 
-## KPIs del dashboard
-
-### Overview
-- Ventas totales
-- Energía vendida total
-- Energía producida total
-- Balance compra vs venta
-
-### Comercial
-- Ventas mensuales
-- Margen por cliente
-- Ingresos por mercado
-- Contratos próximos a vencer
-
-### Operaciones
-- Producción por central
-- Producción por tipo de central
-- Balance compra vs venta
-
-### Gestión de obligaciones
-- Actividades por división
-- Actividades por frecuencia
-- Obligaciones próximas a vencer
-- Actividades críticas
-
-## Estructura del dashboard
-
-```text
-visor_kpi/
-  app.py
-  pages/
-    1_Overview.py
-    2_Comercial.py
-    3_Operaciones.py
-    4_Gestion_obligaciones.py
-  src/
-    database.py
-    queries.py
-    data_access.py
-    charts.py
-  sql/
-    views_dashboard.sql
+connection_string = (
+    f"mssql+pyodbc://@{server}/{database}"
+    "?driver=ODBC+Driver+17+for+SQL+Server"
+    "&trusted_connection=yes"
+)
 ```
 
-## Configuración
+## Vistas KPI consumidas por la app
 
-Definir variables de entorno para conexión SQL Server:
+- `kpi.vw_ventas_mensuales`
+- `kpi.vw_margen_cliente`
+- `kpi.vw_produccion_por_central`
+- `kpi.vw_balance_compra_venta`
+- `kpi.vw_actividades_por_division`
 
-- `DB_SERVER`
-- `DB_NAME`
-- `DB_USER`
-- `DB_PASSWORD`
-- `DB_DRIVER` (default: `ODBC Driver 17 for SQL Server`)
-- `DB_TRUST_SERVER_CERTIFICATE` (default: `yes`)
+Definidas/actualizadas en:
 
-## Ejecutar dashboard
+- `visor_kpi/sql/views_dashboard.sql`
+
+## Páginas del dashboard
+
+- `Overview`
+- `Comercial`
+- `Operaciones`
+- `Gestión de obligaciones`
+
+## Ejecutar
 
 ```bash
 streamlit run visor_kpi/app.py
