@@ -1,24 +1,25 @@
 import streamlit as st
 
 from src.charts import bar
-from src.data_access import get_balance_compra_venta, get_produccion_por_central
+from src.data_access import get_balance_energia, get_produccion_central, get_produccion_tipo_central
 
 st.title("Operaciones")
 
-prod_central = get_produccion_por_central()
-balance = get_balance_compra_venta()
+prod_central = get_produccion_central()
+prod_tipo = get_produccion_tipo_central()
+balance = get_balance_energia()
 
 if not prod_central.empty:
     st.plotly_chart(
-        bar(prod_central, "central", "energia_mwh", "Producción por central"),
+        bar(prod_central, "NOMBRE_CENTRAL", "produccion", "Producción por central"),
         use_container_width=True,
     )
 
-if not balance.empty:
+if not prod_tipo.empty:
     st.plotly_chart(
-        bar(balance, "periodo", "balance_compra_venta_mwh", "Balance compra vs venta"),
+        bar(prod_tipo, "DESCRIPCION_TIPO_CENTRAL", "produccion", "Producción por tipo de central"),
         use_container_width=True,
     )
 
-st.subheader("Detalle de balance")
+st.subheader("Detalle de balance de energía")
 st.dataframe(balance, use_container_width=True)

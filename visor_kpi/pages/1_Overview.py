@@ -1,39 +1,59 @@
+import pandas as pd
 import streamlit as st
 
 from src.charts import bar
 from src.data_access import (
-    get_balance_compra_venta,
-    get_produccion_por_central,
-    get_ventas_mensuales,
+    get_balance_energia,
+    get_energia_vendida_mes,
+    get_ingresos_mes,
+    get_margen_total,
+    get_produccion_total,
 )
 
 st.title("Overview")
 
-ventas_df = get_ventas_mensuales()
-prod_df = get_produccion_por_central()
-balance_df = get_balance_compra_venta()
+energia_df = get_energia_vendida_mes()
+ingresos_df = get_ingresos_mes()
+produccion_total_df = get_produccion_total()
+balance_df = get_balance_energia()
+margen_total_df = get_margen_total()
 
-ventas_totales = float(ventas_df["ingreso_total"].sum()) if not ventas_df.empty else 0.0
-energia_vendida = float(ventas_df["energia_vendida_mwh"].sum()) if not ventas_df.empty else 0.0
-energia_producida = float(prod_df["energia_mwh"].sum()) if not prod_df.empty else 0.0
-balance_total = float(balance_df["balance_compra_venta_mwh"].sum()) if not balance_df.empty else 0.0
+ventas_totales = float(ingresos_df["ingresos"].sum()) if not ingresos_df.empty else 0.0
+energia_vendida = float(energia_df["energia_vendida_mwh"].sum()) if not energia_df.empty else 0.0
+energia_producida = float(produccion_total_df["produccion_total"].sum()) if not produccion_total_df.empty else 0.0
+balance_total = float(balance_df["balance"].sum()) if not balance_df.empty else 0.0
 
 c1, c2, c3, c4 = st.columns(4)
-c1.metric("Ventas totales", f"{ventas_totales:,.0f}")
+c1.metric("Ingresos totales", f"{ventas_totales:,.0f}")
 c2.metric("Energía vendida (MWh)", f"{energia_vendida:,.0f}")
 c3.metric("Energía producida (MWh)", f"{energia_producida:,.0f}")
-c4.metric("Balance compra vs venta (MWh)", f"{balance_total:,.0f}")
+c4.metric("Balance energía (MWh)", f"{balance_total:,.0f}")
 
-if not ventas_df.empty:
+if not ingresos_df.empty:
+    ingresos_plot = ingresos_df.copy()
+    ingresos_plot["periodo"] = (
+        ingresos_plot["ANIO"].astype(str) + "-" + ingresos_plot["MES"].astype(int).astype(str).str.zfill(2)
+    )
     st.plotly_chart(
-        bar(ventas_df, "periodo", "ingreso_total", "Ventas mensuales"),
+        bar(ingresos_plot, "periodo", "ingresos", "Ingresos mensuales"),
         use_container_width=True,
     )
-if not balance_df.empty:
+
+if not energia_df.empty:
+    energia_plot = energia_df.copy()
+    energia_plot["periodo"] = (
+        energia_plot["ANIO"].astype(str) + "-" + energia_plot["MES"].astype(int).astype(str).str.zfill(2)
+    )
     st.plotly_chart(
-        bar(balance_df, "periodo", "balance_compra_venta_mwh", "Balance compra vs venta (mensual)"),
+        bar(energia_plot, "periodo", "energia_vendida_mwh", "Energía vendida mensual"),
         use_container_width=True,
     )
 
-st.subheader("Detalle mensual")
-st.dataframe(balance_df, use_container_width=True)
+st.subheader("Balance y margen total")
+if not balance_df.empty and not margen_total_df.empty:
+    resumen = pd.concat([balance_df.reset_index(drop=True), margen_total_df.reset_index(drop=True)], axis=1)
+    st.dataframe(resumen, use_container_width=True)
+elif not balance_df.empty:
+    st.dataframe(balance_df, use_container_width=True)
+elif not margen_total_df.empty:
+    st.dataframe(margen_total_df, use_container_width=True)
