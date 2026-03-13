@@ -41,11 +41,19 @@ connection_string = (
 
 ## Vistas KPI consumidas por la app
 
-- `kpi.vw_ventas_mensuales`
+- `kpi.vw_energia_vendida_mes`
+- `kpi.vw_ingresos_mes`
+- `kpi.vw_margen_total`
 - `kpi.vw_margen_cliente`
-- `kpi.vw_produccion_por_central`
-- `kpi.vw_balance_compra_venta`
-- `kpi.vw_actividades_por_division`
+- `kpi.vw_ingresos_mercado`
+- `kpi.vw_produccion_total`
+- `kpi.vw_produccion_central`
+- `kpi.vw_produccion_tipo_central`
+- `kpi.vw_balance_energia`
+- `kpi.vw_actividades_division`
+- `kpi.vw_reportes_frecuencia`
+- `kpi.vw_actividades_criticas`
+- `kpi.vw_actividades_proximas`
 
 Definidas/actualizadas en:
 

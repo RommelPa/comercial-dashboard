@@ -1,62 +1,146 @@
 /*
-  Vistas KPI usadas por el dashboard.
-  Se mantienen solo las vistas requeridas por la app.
+  Vistas KPI consumidas por el dashboard.
+  Deben existir en el schema kpi del Data Warehouse.
 */
 
-CREATE OR ALTER VIEW kpi.vw_ventas_mensuales AS
+CREATE OR ALTER VIEW kpi.vw_energia_vendida_mes AS
 SELECT
-    d.anio,
-    d.mes,
-    CONCAT(d.anio, '-', RIGHT(CONCAT('0', d.mes), 2)) AS periodo,
-    SUM(v.ENERGIA_MWH) AS energia_vendida_mwh,
-    SUM(v.MONTO_TOTAL) AS ingreso_total
+    f.ANIO,
+    f.MES,
+    SUM(v.ENERGIA_MWH) AS energia_vendida_mwh
 FROM fact.FACT_VENTA v
-JOIN dim.DIM_FECHA d ON d.SK_FECHA = v.SK_FECHA
-GROUP BY d.anio, d.mes;
+JOIN dim.DIM_FECHA f
+ON v.ID_FECHA = f.ID_FECHA
+GROUP BY
+    f.ANIO,
+    f.MES;
+GO
+
+CREATE OR ALTER VIEW kpi.vw_ingresos_mes AS
+SELECT
+    f.ANIO,
+    f.MES,
+    SUM(v.IMPORTE_SOLES) AS ingresos
+FROM fact.FACT_VENTA v
+JOIN dim.DIM_FECHA f
+ON v.ID_FECHA = f.ID_FECHA
+GROUP BY
+    f.ANIO,
+    f.MES;
+GO
+
+CREATE OR ALTER VIEW kpi.vw_margen_total AS
+SELECT
+    SUM(v.IMPORTE_SOLES) AS ingresos,
+    SUM(c.IMPORTE_SOLES) AS costos,
+    SUM(v.IMPORTE_SOLES) - SUM(c.IMPORTE_SOLES) AS margen
+FROM fact.FACT_VENTA v
+LEFT JOIN fact.FACT_COMPRA c
+ON v.ID_FECHA = c.ID_FECHA;
 GO
 
 CREATE OR ALTER VIEW kpi.vw_margen_cliente AS
 SELECT
-    c.NOMBRE_CLIENTE AS cliente,
-    SUM(v.MONTO_TOTAL - ISNULL(cp.MONTO_TOTAL, 0)) AS margen_total,
-    SUM(v.MONTO_TOTAL) AS ingresos,
-    SUM(ISNULL(cp.MONTO_TOTAL, 0)) AS compras_asociadas
+    cl.NOMBRE_CLIENTE,
+    SUM(v.IMPORTE_SOLES) AS ingresos
 FROM fact.FACT_VENTA v
-JOIN dim.DIM_CLIENTE c ON c.SK_CLIENTE = v.SK_CLIENTE
-LEFT JOIN fact.FACT_COMPRA cp
-    ON cp.SK_CLIENTE = v.SK_CLIENTE
-   AND cp.SK_FECHA = v.SK_FECHA
-GROUP BY c.NOMBRE_CLIENTE;
+JOIN dbo.CONTRATO ct
+ON v.ID_CONTRATO = ct.ID_CONTRATO
+JOIN dim.DIM_CLIENTE cl
+ON ct.ID_CLIENTE = cl.ID_CLIENTE
+GROUP BY
+    cl.NOMBRE_CLIENTE;
 GO
 
-CREATE OR ALTER VIEW kpi.vw_produccion_por_central AS
+CREATE OR ALTER VIEW kpi.vw_ingresos_mercado AS
 SELECT
-    ce.NOMBRE_CENTRAL AS central,
-    SUM(p.ENERGIA_MWH) AS energia_mwh
+    m.DESCRIPCION_MERCADO,
+    SUM(v.IMPORTE_SOLES) AS ingresos
+FROM fact.FACT_VENTA v
+JOIN dbo.CONTRATO ct
+ON v.ID_CONTRATO = ct.ID_CONTRATO
+JOIN dim.DIM_MERCADO m
+ON ct.ID_MERCADO = m.ID_MERCADO
+GROUP BY
+    m.DESCRIPCION_MERCADO;
+GO
+
+CREATE OR ALTER VIEW kpi.vw_produccion_total AS
+SELECT
+    SUM(ENERGIA_MWH) AS produccion_total
+FROM fact.FACT_PRODUCCION;
+GO
+
+CREATE OR ALTER VIEW kpi.vw_produccion_central AS
+SELECT
+    c.NOMBRE_CENTRAL,
+    SUM(p.ENERGIA_MWH) AS produccion
 FROM fact.FACT_PRODUCCION p
-JOIN dim.DIM_CENTRAL ce ON ce.SK_CENTRAL = p.SK_CENTRAL
-GROUP BY ce.NOMBRE_CENTRAL;
+JOIN dim.DIM_CENTRAL c
+ON p.ID_CENTRAL = c.ID_CENTRAL
+GROUP BY
+    c.NOMBRE_CENTRAL;
 GO
 
-CREATE OR ALTER VIEW kpi.vw_balance_compra_venta AS
+CREATE OR ALTER VIEW kpi.vw_produccion_tipo_central AS
 SELECT
-    d.anio,
-    d.mes,
-    CONCAT(d.anio, '-', RIGHT(CONCAT('0', d.mes), 2)) AS periodo,
-    SUM(ISNULL(v.ENERGIA_MWH, 0)) - SUM(ISNULL(c.ENERGIA_MWH, 0)) AS balance_compra_venta_mwh,
-    SUM(ISNULL(v.ENERGIA_MWH, 0)) AS energia_vendida_mwh,
-    SUM(ISNULL(c.ENERGIA_MWH, 0)) AS energia_comprada_mwh
-FROM dim.DIM_FECHA d
-LEFT JOIN fact.FACT_VENTA v ON v.SK_FECHA = d.SK_FECHA
-LEFT JOIN fact.FACT_COMPRA c ON c.SK_FECHA = d.SK_FECHA
-GROUP BY d.anio, d.mes;
+    tc.DESCRIPCION_TIPO_CENTRAL,
+    SUM(p.ENERGIA_MWH) AS produccion
+FROM fact.FACT_PRODUCCION p
+JOIN dim.DIM_CENTRAL c
+ON p.ID_CENTRAL = c.ID_CENTRAL
+JOIN dim.DIM_TIPO_CENTRAL tc
+ON c.ID_TIPO_CENTRAL = tc.ID_TIPO_CENTRAL
+GROUP BY
+    tc.DESCRIPCION_TIPO_CENTRAL;
 GO
 
-CREATE OR ALTER VIEW kpi.vw_actividades_por_division AS
+CREATE OR ALTER VIEW kpi.vw_balance_energia AS
 SELECT
-    d.NOMBRE_DIVISION AS division,
+    SUM(v.ENERGIA_MWH) AS energia_vendida,
+    SUM(c.ENERGIA_MWH) AS energia_comprada,
+    SUM(v.ENERGIA_MWH) - SUM(c.ENERGIA_MWH) AS balance
+FROM fact.FACT_VENTA v
+LEFT JOIN fact.FACT_COMPRA c
+ON v.ID_FECHA = c.ID_FECHA;
+GO
+
+CREATE OR ALTER VIEW kpi.vw_actividades_division AS
+SELECT
+    d.NOMBRE_DIVISION,
     COUNT(*) AS total_actividades
 FROM dbo.ACTIVIDAD a
-JOIN dim.DIM_DIVISION d ON d.SK_DIVISION = a.SK_DIVISION
-GROUP BY d.NOMBRE_DIVISION;
+JOIN dim.DIM_DIVISION d
+ON a.ID_DIVISION = d.ID_DIVISION
+GROUP BY
+    d.NOMBRE_DIVISION;
+GO
+
+CREATE OR ALTER VIEW kpi.vw_reportes_frecuencia AS
+SELECT
+    f.NOMBRE_FRECUENCIA,
+    COUNT(*) AS total_reportes
+FROM dbo.ACTIVIDAD a
+JOIN dim.DIM_FRECUENCIA f
+ON a.ID_FRECUENCIA = f.ID_FRECUENCIA
+GROUP BY
+    f.NOMBRE_FRECUENCIA;
+GO
+
+CREATE OR ALTER VIEW kpi.vw_actividades_criticas AS
+SELECT
+    ACTIVIDAD,
+    CRITICIDAD,
+    DESTINO
+FROM dbo.ACTIVIDAD
+WHERE CRITICIDAD = 'Alta';
+GO
+
+CREATE OR ALTER VIEW kpi.vw_actividades_proximas AS
+SELECT
+    ACTIVIDAD,
+    DESTINO,
+    DIAS_ALERTA
+FROM dbo.ACTIVIDAD
+WHERE DIAS_ALERTA <= 7;
 GO
