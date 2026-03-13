@@ -1,9 +1,6 @@
 streamlit>=1.32.0,<2.0
 pandas>=2.2.0,<3.0
+sqlalchemy>=2.0.0,<3.0
+pyodbc>=5.1.0
 plotly>=5.19.0,<6.0
 openpyxl>=3.1.5
-numpy>=1.26.4,<2.0
-faker>=23.2.0
-pytest>=8.0.0
-xlsxwriter>=3.1.9
-python-dateutil>=2.9.0
